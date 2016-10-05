@@ -19,6 +19,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,8 +46,8 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.eclipse.rdf4j.IsolationLevel;
-import org.eclipse.rdf4j.RDF4JException;
 import org.eclipse.rdf4j.OpenRDFUtil;
+import org.eclipse.rdf4j.RDF4JException;
 import org.eclipse.rdf4j.common.io.IOUtil;
 import org.eclipse.rdf4j.http.protocol.Protocol;
 import org.eclipse.rdf4j.http.protocol.Protocol.Action;
@@ -668,7 +669,8 @@ public class SesameSession extends SparqlSession {
 		// Set Content-Length to -1 as we don't know it and we also don't want to
 		// cache
 		HttpEntity entity = new InputStreamEntity(contents, -1,
-				ContentType.parse(dataFormat.getDefaultMIMEType()));
+				Optional.ofNullable(dataFormat).map(df -> ContentType.parse(df.getDefaultMIMEType())).orElse(
+						null));
 		upload(entity, baseURI, overwrite, preserveNodeIds, action, contexts);
 	}
 
